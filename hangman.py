@@ -199,6 +199,7 @@ class Hangman:
 
 
     def history(self):
+        # Do smth smth
         
 
         self.history_win.refresh()
