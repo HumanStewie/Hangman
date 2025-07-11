@@ -152,7 +152,7 @@ class Hangman:
         result_win.addstr(0, 7, f"The word was [{self.word}].")
         result_win.refresh()
 
-        for i in range(5):
+        for _ in range(5):
             if status == True:
                 status_win.addstr(0, 0, pyfiglet.figlet_format("YOU WON!", font="drpepper"), curses.color_pair(1))
             else:

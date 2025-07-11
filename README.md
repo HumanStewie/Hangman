@@ -14,7 +14,7 @@ Make sure to install all dependencies first:
 $ pip install windows-curses # curses lib made for Windows
 $ pip install pyfiglet
 ```
-To use simply download or clone the repository and run it in the terminal.
+To use simply download or clone the repository and run `hangman.py` in the terminal.
 ```
 $ python hangman.py
 ```
