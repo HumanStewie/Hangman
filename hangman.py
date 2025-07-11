@@ -181,7 +181,7 @@ class Hangman:
 
 
         
-        # TODO: Clean up code 
+
         if self.synonyms != None:
             if self.word.title() in self.synonyms:
                 self.synonyms.remove(self.word.title())
