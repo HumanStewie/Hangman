@@ -329,7 +329,7 @@ def get_letter_position(word):
 
 
 def get_random_word():
-    fallback = ["python", "hangman", "development", "artificial", "security", "logic", "algorithm", "program", "game", ]
+    fallback = ["python", "hangman", "development", "artificial", "security", "logic", "algorithm", "program", "game", "technology", "intelligence", "data", "collection", "steam", "story", "difficult"]
 
     with open("filtered.json", "r") as dic:
         dictionary = json.load(dic)
