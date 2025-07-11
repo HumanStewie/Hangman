@@ -5,7 +5,7 @@ import time
 import random
 import pyfiglet
 import json
-
+import sys
 
 
 
@@ -233,10 +233,11 @@ class Hangman:
 
     
 def main(screen):
-    curses.resize_term(30, 120)
-
-    screen.getmaxyx()
     # Use this to tell the user to expand the window if its too small
+    y, x = screen.getmaxyx()
+    if y < 30 and x < 120:
+        sys.exit("Terminal window too small, please expand the window to at least 120x30 to continue.")
+        
     while True:
        
 
