@@ -11,10 +11,14 @@ This is the recreation of the classic chilren's game "Hangman" with extra featur
 Make sure to install all dependencies first:
 ```bash
 # Install all dependencies
-pip install windows-curses # curses lib made for Windows
-pip install pyfiglet
+$ pip install windows-curses # curses lib made for Windows
+$ pip install pyfiglet
 ```
 To use simply download or clone the repository and run it in the terminal.
 ```
 $ python hangman.py
+```
+If you want to run a diagnosis of the code, simply run `test_hangman.py` as above.
+```
+$ python test_hangman.py
 ```
