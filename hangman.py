@@ -240,14 +240,9 @@ def main(screen):
         sys.exit("Terminal window too small, please expand the window to at least 120x30 to continue.")
         
     while True:
-       
-
         screen.clear()
-        
         style_win = curses.newwin(1, 2, 29, 0)
-
         screen.refresh()
-
 
         style_win.addstr(">")
         style_win.refresh()
@@ -255,77 +250,65 @@ def main(screen):
         random_word = get_random_word()
 
         init = Hangman(screen, random_word)
-        init.start()
-        
-        
+        init.start()        
 
-        while True:
-            text = curses.textpad.Textbox(init.user_win)
+        text = curses.textpad.Textbox(init.user_win)
+        init.user_win.refresh()
+                
+        text.edit()
+        inp = text.gather().strip().lower()
+        if inp == "start":
+            init.user_win.clear()
             init.user_win.refresh()
-                    
-            text.edit()
-            inp = text.gather().strip().lower()
-            if inp == "start":
-                init.user_win.clear()
-                init.user_win.refresh()
-                init.start_win.clear()
-                init.start_win.refresh()
+            init.start_win.clear()
+            init.start_win.refresh()
+            
+            init.screen.clear()
+            init.screen.refresh()
+            init.hangman(0)
+            init.init_borders()
+            init.definition()
+            curses.curs_set(0)
+            
+            game_status = True
+            mistakes = 0
+            cache, letters = get_letter_position(random_word)
+            count = 0
+            while game_status:
+                ch = init.user_win.getkey().lower()
                 
-                init.screen.clear()
-                init.screen.refresh()
-                init.hangman(0)
-                init.init_borders()
-                init.definition()
-                curses.curs_set(0)
-                
-                game_status = True
-                mistakes = 0
-                cache, letters = get_letter_position(random_word)
-                count = 0
-
-                while game_status:
-                    ch = init.user_win.getkey().lower()
-                    
-                    if ch in random_word:
+                if ch in random_word:
+                    # How did this even work????    
+                    for i in range(len(random_word)):
+                        if cache[i][1] == ch:
+                            init.answer(cache[i][0], ch)
+                            if ch in letters:
+                                letters.remove(ch)
+                                count+=1
+                                if count == len(random_word):
+                                    #call the end handler
+                                    game_status = False 
+                                    time.sleep(1)
+                                    init.answer_win.clear()
+                                    init.answer_win.refresh()
+                                    init.status(True)                                 
+                else:
+                    mistakes += 1
+                    init.hangman(mistakes)
+                    init.errors(mistakes, ch)
+                    if mistakes == 8:
+                        #call the end handler
+                        game_status = False
+                        init.answer_win.clear()
+                        init.answer_win.refresh()
+                        init.status(False)
                         
-                        # How did this even work????    
-                        for i in range(len(random_word)):
-                            if cache[i][1] == ch:
-                                init.answer(cache[i][0], ch)
-                                if ch in letters:
-                                    letters.remove(ch)
-                                    count+=1
-                                    if count == len(random_word):
-                                        #call the end handler
-                                        game_status = False 
-                                        time.sleep(1)
-                                        init.answer_win.clear()
-                                        init.answer_win.refresh()
-                                        init.status(True)                                 
-
-                    else:
-                        mistakes += 1
-                        init.hangman(mistakes)
-                        init.errors(mistakes, ch)
-                        if mistakes == 8:
-                            #call the end handler
-                            game_status = False
-                            init.answer_win.clear()
-                            init.answer_win.refresh()
-                            init.status(False)
-                            
-                break
-
-                
-            elif inp == "quit":
-                return None
+        elif inp == "quit":
+            break
         
 
 def get_letter_position(word):
-    letters = []
-    
-    for letter in word:
-        letters.append(letter)
+    letters = [letter for letter in word]
     cache = list(enumerate(letters))
     return cache, letters
 
@@ -341,7 +324,7 @@ def get_random_word():
         meaning = dictionary[random_word]["MEANINGS"][0]
         return random_word.lower()
 
-    except IndexError as missing_meaning:
+    except IndexError:
         return random.choice(fallback)
     
 
