@@ -264,7 +264,7 @@ def main(screen):
             init.user_win.refresh()
                     
             text.edit()
-            inp = text.gather().strip()
+            inp = text.gather().strip().lower()
             if inp == "start":
                 init.user_win.clear()
                 init.user_win.refresh()
@@ -284,7 +284,7 @@ def main(screen):
                 count = 0
 
                 while game_status:
-                    ch = init.user_win.getkey()
+                    ch = init.user_win.getkey().lower()
                     
                     if ch in random_word:
                         
@@ -339,10 +339,11 @@ def get_random_word():
     
     try:
         meaning = dictionary[random_word]["MEANINGS"][0]
-    except IndexError:
+        return random_word.lower()
+
+    except IndexError as missing_meaning:
         return random.choice(fallback)
     
-    return random_word.lower()
 
 
 def get_word_meaning(word):
