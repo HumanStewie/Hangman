@@ -16,7 +16,7 @@ class Hangman:
     # Initialize windows and pads
 
         self.screen = screen
-        
+
         # Implement animation for hangman letter, change out newwin for newpad
         self.start_win = curses.newwin(25, 70, 3, 30)
         self.hangman_win = curses.newwin(11, 41, 1, 40)
@@ -33,41 +33,41 @@ class Hangman:
 
         self.screen.refresh()
 
-        
+
 
 
     def hangman(self, mistakes):
         self.hangman_win.clear()
         if mistakes == 1:
             self.hangman_win.addstr( '''
-               
-               
-               
-               
-                                    
-               
-               
+
+
+
+
+
+
+
             __________''')
 
         elif mistakes == 2:
             self.hangman_win.addstr( '''
-               
-               |       
-               |      
-               |     
-               |       
-               |      
+
+               |
+               |
+               |
+               |
+               |
                |
             ___|______''')
-        
+
         elif mistakes == 3:
             self.hangman_win.addstr( '''
                __________
-               |        
-               |       
-               |      
-               |       
-               |      
+               |
+               |
+               |
+               |
+               |
                |
             ___|______''')
 
@@ -75,10 +75,10 @@ class Hangman:
             self.hangman_win.addstr( '''
                __________
                |        |
-               |       
-               |     
-               |       
-               |      
+               |
+               |
+               |
+               |
                |
             ___|______''')
 
@@ -87,9 +87,9 @@ class Hangman:
                __________
                |        |
                |        o
-               |      
-               |        
-               |       
+               |
+               |
+               |
                |
             ___|______''')
 
@@ -99,8 +99,8 @@ class Hangman:
                |        |
                |        o
                |      --|--
-               |       
-               |       
+               |
+               |
                |
             ___|______''')
 
@@ -111,7 +111,7 @@ class Hangman:
                |        o
                |      --|--
                |        |
-               |       
+               |
                |
             ___|______''')
 
@@ -141,8 +141,8 @@ class Hangman:
         self.answer_win.addstr(2, ch_count*(100//len(self.word)) + 10, ch)
 
         self.answer_win.refresh()
-        
-    
+
+
     def status(self, status):
         status_win = curses.newwin(6, 38, 13, 41)
         result_win = curses.newwin(1, 38, 11, 41)
@@ -157,30 +157,30 @@ class Hangman:
                 status_win.addstr(0, 0, pyfiglet.figlet_format("YOU WON!", font="drpepper"), curses.color_pair(1))
             else:
                 status_win.addstr(0, 0, pyfiglet.figlet_format("YOU LOST", font="drpepper"), curses.color_pair(2))
-                
+
             status_win.refresh()
             time.sleep(0.5)
             status_win.clear()
             status_win.refresh()
             time.sleep(0.5)
-            
-           
-        
+
+
+
 
     def errors(self, mistakes, ch):
         self.errors_win.addstr(0, mistakes, ch)
         self.errors_win.addstr(0, mistakes+1, " ")
-        self.errors_win.refresh()  
+        self.errors_win.refresh()
 
     def definition(self):
-    
+
         self.definition_win.addstr("Definition:", curses.A_STANDOUT)
         for i in range(0, 2):
             self.definition_win.addstr(i+1, 0, f" - {str(self.meanings[i])}")
         self.definition_win.addstr(3, 0, "Synonyms:", curses.A_STANDOUT)
 
 
-        
+
 
         if self.synonyms != None:
             if self.word.title() in self.synonyms:
@@ -200,7 +200,16 @@ class Hangman:
 
     def history(self):
         # Do smth smth
-        
+
+        with open("history.txt", "r") as history:
+            lines = history.readlines()
+        lines.reverse()
+
+        for i in range(0, 5):
+            try:
+                self.history_win.addstr(i, 0, lines[i])
+            except IndexError:
+                pass
 
         self.history_win.refresh()
 
@@ -211,7 +220,7 @@ class Hangman:
         self.screen.addstr(2, 82, "               Error               ", curses.color_pair(4))
         curses.textpad.rectangle(self.screen, 4, 81, 11, 117)
         curses.textpad.rectangle(self.screen, 1, 81, 3, 117)
-        
+
         # history
         curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_YELLOW)
         self.screen.addstr(2, 2, "              History              ", curses.color_pair(3))
@@ -232,13 +241,13 @@ class Hangman:
 
 
 
-    
+
 def main(screen):
     # Use this to tell the user to expand the window if its too small
     y, x = screen.getmaxyx()
     if y < 30 and x < 120:
         sys.exit("Terminal window too small, please expand the window to at least 120x30 to continue.")
-        
+
     while True:
         screen.clear()
         style_win = curses.newwin(1, 2, 29, 0)
@@ -246,15 +255,15 @@ def main(screen):
 
         style_win.addstr(">")
         style_win.refresh()
-        
+
         random_word = get_random_word()
 
         init = Hangman(screen, random_word)
-        init.start()        
+        init.start()
 
         text = curses.textpad.Textbox(init.user_win)
         init.user_win.refresh()
-                
+
         text.edit()
         inp = text.gather().strip().lower()
         if inp == "start":
@@ -262,23 +271,25 @@ def main(screen):
             init.user_win.refresh()
             init.start_win.clear()
             init.start_win.refresh()
-            
+
             init.screen.clear()
             init.screen.refresh()
             init.hangman(0)
             init.init_borders()
             init.definition()
             curses.curs_set(0)
-            
+
+            init.history()
+
             game_status = True
             mistakes = 0
             cache, letters = get_letter_position(random_word)
             count = 0
             while game_status:
                 ch = init.user_win.getkey().lower()
-                
+
                 if ch in random_word:
-                    # How did this even work????    
+                    # How did this even work????
                     for i in range(len(random_word)):
                         if cache[i][1] == ch:
                             init.answer(cache[i][0], ch)
@@ -287,25 +298,29 @@ def main(screen):
                                 count+=1
                                 if count == len(random_word):
                                     #call the end handler
-                                    game_status = False 
+                                    with open("history.txt", "a") as history:
+                                        history.write(f"{random_word}—{mistakes}W\n")
+                                    game_status = False
                                     time.sleep(1)
                                     init.answer_win.clear()
                                     init.answer_win.refresh()
-                                    init.status(True)                                 
+                                    init.status(True)
                 else:
                     mistakes += 1
                     init.hangman(mistakes)
                     init.errors(mistakes, ch)
                     if mistakes == 8:
                         #call the end handler
+                        with open("history.txt", "a") as history:
+                            history.write(f"{random_word}—{mistakes}L\n")
                         game_status = False
                         init.answer_win.clear()
                         init.answer_win.refresh()
                         init.status(False)
-                        
+
         elif inp == "quit":
             break
-        
+
 
 def get_letter_position(word):
     letters = [letter for letter in word]
@@ -319,20 +334,20 @@ def get_random_word():
     with open("filtered.json", "r") as dic:
         dictionary = json.load(dic)
     random_word = random.choice(list(dictionary.keys()))
-    
+
     try:
         meaning = dictionary[random_word]["MEANINGS"][0]
         return random_word.lower()
 
     except IndexError:
         return random.choice(fallback)
-    
+
 
 
 def get_word_meaning(word):
     with open("filtered.json", "r") as dic:
         dictionary = json.load(dic)
-    
+
     return dictionary[word.upper()]["MEANINGS"][0]
 
 def get_word_synonym(word):
@@ -347,4 +362,3 @@ def get_word_synonym(word):
 
 if __name__ == "__main__":
     wrapper(main)
-
