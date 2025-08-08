@@ -247,7 +247,8 @@ def main(screen):
     y, x = screen.getmaxyx()
     if y < 30 and x < 120:
         sys.exit("Terminal window too small, please expand the window to at least 120x30 to continue.")
-
+    with open("history.txt", "w") as f:
+        f.write()
     while True:
         screen.clear()
         style_win = curses.newwin(1, 2, 29, 0)
@@ -278,7 +279,7 @@ def main(screen):
             init.init_borders()
             init.definition()
             curses.curs_set(0)
-
+            
             init.history()
 
             game_status = True
